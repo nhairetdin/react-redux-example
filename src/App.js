@@ -1,28 +1,48 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+
+// connect from react-redux
+import { connect } from 'react-redux'
+
+// import needed functions from our reducer
+import { addNewCar } from './reducer'
 
 class App extends Component {
+  state = {
+    inputValue: ''
+  }
+
+  handleClick = () => {
+    this.props.addNewCar(this.state.inputValue)
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        <input 
+          value={ this.state.inputValue } 
+          onChange={ event => this.setState({ inputValue: event.target.value }) }>
+        </input>
+
+        <button onClick={ this.handleClick }>Add</button>
+
+        { this.props.cars.map((car, index) => <div key={ index }>{ car }</div>) }
       </div>
-    );
+    )
   }
 }
 
-export default App;
+// access the store and define the data we need in this component (App)
+const mapStateToProps = state => {
+  return {
+    cars: state.cars // now we can use props 'cars' in our component App
+  }
+}
+
+// instead of using just export...
+// export default App
+
+// wrap the component App with it's props and pass it to the connect:
+export default connect(
+  mapStateToProps,
+  { addNewCar }
+)(App)
